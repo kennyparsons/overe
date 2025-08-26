@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -24,11 +25,25 @@ const (
 	channels                = 1
 )
 
-var (
-	isRecording = false
-)
-
 func main() {
+	// Set up logging to a file in the user's log directory.
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatalf("Could not get user home directory: %v", err)
+	}
+	logDir := filepath.Join(homeDir, "Library", "Logs")
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		log.Fatalf("Could not create log directory: %v", err)
+	}
+	logFilePath := filepath.Join(logDir, "stt-app.log")
+	logFile, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("Could not open log file: %v", err)
+	}
+	defer logFile.Close()
+	// We use io.MultiWriter to log to both stdout and the log file.
+	log.SetOutput(io.MultiWriter(os.Stdout, logFile))
+
 	mainthread.Init(run)
 }
 
@@ -43,19 +58,40 @@ func run() {
 	}
 	log.Printf("hotkey: %v is registered", hk)
 
-	// Start listening for hotkey events. This loop will block the main thread
-	// and allow the hotkey library to process events.
+	doneChan := make(chan bool)
+
+	// This is the main, synchronous event loop.
 	for {
+		// 1. Block and wait for a key press.
 		<-hk.Keydown()
-		if !isRecording {
-			go handleHotkey()
+
+		// 2. Handle the entire recording process in a separate goroutine.
+		go handleHotkey(doneChan)
+
+		// 3. Block the main loop, making it deaf to new key presses until the
+		//    entire process is complete.
+		<-doneChan
+
+		// 4. DRAIN PHASE: After the process is done, we aggressively drain any
+		//    phantom keydown events that may have been queued by the OS while
+		//    the AppleScript dialog was open.
+	DrainLoop:
+		for {
+			select {
+			case <-hk.Keydown():
+				// An event was queued; discard it and check again.
+				log.Println("Drained a phantom keydown event.")
+			default:
+				// The channel is empty; we are safe to listen for new events.
+				break DrainLoop
+			}
 		}
 	}
 }
 
-func handleHotkey() {
-	isRecording = true
-	defer func() { isRecording = false }()
+func handleHotkey(doneChan chan bool) {
+	// Ensure we signal the main loop to continue when this function exits.
+	defer func() { doneChan <- true }()
 
 	log.Println("Hotkey pressed. Starting recording...")
 
@@ -65,8 +101,9 @@ func handleHotkey() {
 		sendErrorNotification(err)
 		return
 	}
-	defer os.Remove(tempFile.Name())
+	// defer os.Remove(tempFile.Name())
 	tempFilePath, _ := filepath.Abs(tempFile.Name())
+	log.Printf("Recording audio to temporary file: %s", tempFilePath)
 	tempFile.Close()
 
 	stopChan := make(chan struct{})
@@ -142,8 +179,14 @@ func transcribe(audioFilePath string) {
 	for i := 0; i < transcriptionRetries; i++ {
 		log.Printf("Transcription attempt %d/%d", i+1, transcriptionRetries)
 		homeDir := os.Getenv("HOME")
-		modelPath := filepath.Join(homeDir, ".config/whisper-cpp/models/ggml-tiny.en.bin")
+		modelPath := filepath.Join(homeDir, ".config/whisper-cpp/models/ggml-large-v3-q5_0.bin")
 		cmd := exec.Command(transcriptionBinaryPath, "--model", modelPath, audioFilePath)
+		// When running as a bundled .app, the PATH is not inherited from the shell.
+		// We must explicitly provide the path to Homebrew and other required binaries.
+		vlcPath := "/Applications/VLC.app/Contents/MacOS"
+		homebrewPath := "/opt/homebrew/bin"
+		newPath := fmt.Sprintf("PATH=%s:%s:%s", vlcPath, homebrewPath, os.Getenv("PATH"))
+		cmd.Env = append(os.Environ(), newPath)
 		output, err = cmd.CombinedOutput()
 		if err == nil {
 			break
