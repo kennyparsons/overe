@@ -141,7 +141,9 @@ func transcribe(audioFilePath string) {
 
 	for i := 0; i < transcriptionRetries; i++ {
 		log.Printf("Transcription attempt %d/%d", i+1, transcriptionRetries)
-		cmd := exec.Command(transcriptionBinaryPath, audioFilePath)
+		homeDir := os.Getenv("HOME")
+		modelPath := filepath.Join(homeDir, ".config/whisper-cpp/models/ggml-tiny.en.bin")
+		cmd := exec.Command(transcriptionBinaryPath, "--model", modelPath, audioFilePath)
 		output, err = cmd.CombinedOutput()
 		if err == nil {
 			break
