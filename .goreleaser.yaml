@@ -1,0 +1,86 @@
+version: 1
+
+project_name: Overe
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - main: .
+    binary: Overe
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - darwin
+    goarch:
+      - arm64
+      - amd64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+brews:
+  -
+    name: Overe
+    commit_author:
+      name: Kenny Parsons
+      email: kenny.parsons@gmail.com
+    commit_msg_template: "Brew cask update for {{ .ProjectName }} version {{ .Tag }}"
+    directory: Casks
+    description: "A background app to record audio via a hotkey and transcribe it."
+    license: "MIT"
+    homepage: "https://github.com/kennyparsons/stt" # Placeholder, user should update
+    depends_on:
+      formula:
+        - "go-transcribe"
+    install: |
+      app "Overe.app"
+    repository:
+      owner: kennyparsons
+      name: homebrew-overe
+      branch: main
+      token: "{{ .Env.GITHUB_TOKEN }}"
+
+# macOS Application Bundle configuration
+darwin_bundle:
+  - name: Overe
+    identifier: "com.kennyparsons.overe"
+    icon: "icon.png" # Placeholder, user needs to add an icon file
+    long_description: "Overe is a background application that listens for a global hotkey, records a short audio clip, transcribes it, and copies the result to the clipboard."
+    info_plist: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+      <plist version="1.0">
+      <dict>
+          <key>CFBundleExecutable</key>
+          <string>Overe</string>
+          <key>CFBundleIdentifier</key>
+          <string>com.kennyparsons.overe</string>
+          <key>CFBundleName</key>
+          <string>Overe</string>
+          <key>CFBundlePackageType</key>
+          <string>APPL</string>
+          <key>LSUIElement</key>
+          <true/>
+          <key>NSMicrophoneUsageDescription</key>
+          <string>This app needs to record audio to transcribe it to text.</string>
+      </dict>
+      </plist>

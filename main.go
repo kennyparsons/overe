@@ -179,7 +179,7 @@ func transcribe(audioFilePath string) {
 	for i := 0; i < transcriptionRetries; i++ {
 		log.Printf("Transcription attempt %d/%d", i+1, transcriptionRetries)
 		homeDir := os.Getenv("HOME")
-		modelPath := filepath.Join(homeDir, ".config/whisper-cpp/models/ggml-large-v3-q5_0.bin")
+		modelPath := filepath.Join(homeDir, ".config/whisper-cpp/models/ggml-medium.en.bin")
 		cmd := exec.Command(transcriptionBinaryPath, "--model", modelPath, audioFilePath)
 		// When running as a bundled .app, the PATH is not inherited from the shell.
 		// We must explicitly provide the path to Homebrew and other required binaries.
