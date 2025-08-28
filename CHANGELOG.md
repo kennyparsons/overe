@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/kennyparsons/overe/compare/v1.2.0...v1.2.1) (2025-08-28)
+
+
+### Bug Fixes
+
+* **ci:** Remove amd64 build from release pipeline ([1834683](https://github.com/kennyparsons/overe/commit/18346838e71ac9aa9d8894de24d2574b69061692))
+
 # [1.2.0](https://github.com/kennyparsons/overe/compare/v1.1.1...v1.2.0) (2025-08-28)
 
 
