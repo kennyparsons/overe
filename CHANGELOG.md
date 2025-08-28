@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/kennyparsons/overe/compare/v1.1.1...v1.2.0) (2025-08-28)
+
+
+### Features
+
+* add version and run commands ([8c74f97](https://github.com/kennyparsons/overe/commit/8c74f97de3fe27f5067658ca4ba90a4a7f985996))
+
 ## [1.1.1](https://github.com/kennyparsons/overe/compare/v1.1.0...v1.1.1) (2025-08-28)
 
 
