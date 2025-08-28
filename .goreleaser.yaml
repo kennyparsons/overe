@@ -1,6 +1,6 @@
 version: 1
 
-project_name: Overe
+project_name: overe
 
 before:
   hooks:
@@ -9,7 +9,7 @@ before:
 
 builds:
   - main: .
-    binary: Overe
+    binary: overe
     env:
       - CGO_ENABLED=1
     goos:
@@ -38,7 +38,7 @@ changelog:
 
 brews:
   -
-    name: Overe
+    name: overe
     commit_author:
       name: Kenny Parsons
       email: kenny.parsons@gmail.com
@@ -54,9 +54,9 @@ brews:
     dependencies:
       - name: "kennyparsons/go-transcribe/go-transcribe"
     install: |
-      bin.install "Overe"
+      bin.install "overe"
     service: |
-      run [opt_bin/"Overe"]
+      run [opt_bin/"overe"]
       keep_alive true
       run_at_load true
 
