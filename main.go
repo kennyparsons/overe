@@ -52,7 +52,7 @@ func main() {
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		log.Fatalf("Could not create log directory: %v", err)
 	}
-	logFilePath := filepath.Join(logDir, "stt-app.log")
+	logFilePath := filepath.Join(logDir, "overe.log")
 	logFile, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatalf("Could not open log file: %v", err)
