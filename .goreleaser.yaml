@@ -47,10 +47,9 @@ brews:
     directory: Casks
     description: "A background app to record audio via a hotkey and transcribe it."
     license: "MIT"
-    homepage: "https://github.com/kennyparsons/stt" # Placeholder, user should update
+    homepage: "https://github.com/kennyparsons/overe"
     depends_on:
-      formula:
-        - "go-transcribe"
+      formula: ["go-transcribe"]
     install: |
       app "Overe.app"
     repository:
@@ -59,28 +58,43 @@ brews:
       branch: main
       token: "{{ .Env.GITHUB_TOKEN }}"
 
+signs:
+  -
+    artifacts: ["all"]
+    cmd: "gon"
+    args: ["-"]
+    env:
+      - "GON_PROVIDER=developer-id"
+      - "GON_DEVELOPER_ID_EMAIL={{ .Env.APPLE_DEVELOPER_EMAIL }}"
+      - "GON_DEVELOPER_ID_PASSWORD={{ .Env.APPLE_DEVELOPER_PASSWORD }}"
+      - "GON_APP_STORE_CONNECT_API_KEY_ID={{ .Env.APPLE_API_KEY_ID }}"
+      - "GON_APP_STORE_CONNECT_API_KEY_ISSUER_ID={{ .Env.APPLE_API_KEY_ISSUER_ID }}"
+      - "GON_APP_STORE_CONNECT_API_KEY_P8_PATH={{ .Env.APPLE_API_KEY_P8_PATH }}"
+
 # macOS Application Bundle configuration
-darwin_bundle:
-  - name: Overe
-    identifier: "com.kennyparsons.overe"
-    icon: "icon.png" # Placeholder, user needs to add an icon file
-    long_description: "Overe is a background application that listens for a global hotkey, records a short audio clip, transcribes it, and copies the result to the clipboard."
-    info_plist: |
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-          <key>CFBundleExecutable</key>
-          <string>Overe</string>
-          <key>CFBundleIdentifier</key>
-          <string>com.kennyparsons.overe</string>
-          <key>CFBundleName</key>
-          <string>Overe</string>
-          <key>CFBundlePackageType</key>
-          <string>APPL</string>
-          <key>LSUIElement</key>
-          <true/>
-          <key>NSMicrophoneUsageDescription</key>
-          <string>This app needs to record audio to transcribe it to text.</string>
-      </dict>
-      </plist>
+universal_binaries:
+- id: "overe-universal"
+  name_template: "Overe"
+
+release:
+  prerelease: "auto"
+
+nfpms:
+- id: "overe-app"
+  package_name: "Overe"
+  file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  homepage: "https://github.com/kennyparsons/overe"
+  description: "A background app to record audio via a hotkey and transcribe it."
+  maintainer: "Kenny Parsons <kenny.parsons@gmail.com>"
+  license: "MIT"
+  formats:
+  - "app"
+  bindir: "/Applications"
+  contents:
+  - src: "dist/darwin_universal/Overe"
+    dst: "/Applications/Overe.app/Contents/MacOS/Overe"
+  - src: "stt/Info.plist"
+    dst: "/Applications/Overe.app/Contents/Info.plist"
+    type: "config"
+  - src: "icon.png"
+    dst: "/Applications/Overe.app/Contents/Resources/icon.png"
