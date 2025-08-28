@@ -47,11 +47,12 @@ brews:
     description: "A background app to record audio via a hotkey and transcribe it."
     license: "MIT"
     homepage: "https://github.com/kennyparsons/overe"
-    tap:
+    repository:
       owner: kennyparsons
-      name: homebrew-go-transcribe
+      name: homebrew-overe
+      token: "{{ .Env.GITHUB_TOKEN }}"
     dependencies:
-      - name: "go-transcribe"
+      - name: "kennyparsons/go-transcribe/go-transcribe"
     install: |
       bin.install "Overe"
     service: |
