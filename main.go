@@ -18,6 +18,8 @@ import (
 	"golang.design/x/hotkey/mainthread"
 )
 
+var version = "dev"
+
 const (
 	transcriptionRetries    = 3
 	transcriptionBinaryPath = "/opt/homebrew/bin/go-transcribe"
@@ -26,11 +28,26 @@ const (
 )
 
 func main() {
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "version":
+			fmt.Printf("overe version: %s\n", version)
+			return
+		case "run":
+			// continue to normal execution
+		default:
+			fmt.Printf("Unknown command: %s\n", os.Args[1])
+			fmt.Println("Available commands: run, version")
+			os.Exit(1)
+		}
+	}
+
 	// Set up logging to a file in the user's log directory.
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("Could not get user home directory: %v", err)
 	}
+
 	logDir := filepath.Join(homeDir, "Library", "Logs")
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		log.Fatalf("Could not create log directory: %v", err)
