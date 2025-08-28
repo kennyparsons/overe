@@ -1,3 +1,2 @@
 # Ignore the builds directory
-builds/*
-!builds/icon.icns
+builds/

@@ -18,7 +18,7 @@ builds:
       - arm64
       - amd64
     ldflags:
-      - -s -w -X main.version={{.Version}}
+      - "-s -w -X main.version={{.Version}} -extldflags '-sectcreate __TEXT __info_plist Info.plist'"
 
 archives:
   - format: tar.gz
@@ -43,8 +43,8 @@ brews:
     commit_author:
       name: Kenny Parsons
       email: kenny.parsons@gmail.com
-    commit_msg_template: "Brew cask update for {{ .ProjectName }} version {{ .Tag }}"
-    directory: Casks
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+    directory: Formula
     description: "A background app to record audio via a hotkey and transcribe it."
     license: "MIT"
     homepage: "https://github.com/kennyparsons/overe"
@@ -54,40 +54,11 @@ brews:
     dependencies:
       - name: "go-transcribe"
     install: |
-      app "Overe.app"
-    repository:
-      owner: kennyparsons
-      name: homebrew-overe
-      branch: main
-      token: "{{ .Env.GITHUB_TOKEN }}"
-
-signs:
-  -
-    artifacts: ["all"]
-    cmd: "gon"
-    args: ["-"]
-    env:
-      - "GON_PROVIDER=developer-id"
-      - "GON_DEVELOPER_ID_EMAIL={{ .Env.APPLE_DEVELOPER_EMAIL }}"
-      - "GON_DEVELOPER_ID_PASSWORD={{ .Env.APPLE_DEVELOPER_PASSWORD }}"
-      - "GON_APP_STORE_CONNECT_API_KEY_ID={{ .Env.APPLE_API_KEY_ID }}"
-      - "GON_APP_STORE_CONNECT_API_KEY_ISSUER_ID={{ .Env.APPLE_API_KEY_ISSUER_ID }}"
-      - "GON_APP_STORE_CONNECT_API_KEY_P8_PATH={{ .Env.APPLE_API_KEY_P8_PATH }}"
-
-# macOS Application Bundle configuration
-universal_binaries:
-- id: "overe-universal"
-  name_template: "Overe"
-
-# macOS Application Bundle configuration
-app_bundles:
-  - id: "overe-app"
-    name: "Overe"
-    icon: "builds/icon.icns"
-    plist: "Info.plist"
-    bundle_id: "com.user.stt-app"
-    universal_binaries:
-      - "overe-universal"
+      bin.install "Overe"
+    service: |
+      run [opt_bin/"Overe"]
+      keep_alive true
+      run_at_load true
 
 release:
   prerelease: "auto"
