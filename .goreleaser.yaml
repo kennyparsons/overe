@@ -79,9 +79,6 @@ universal_binaries:
 - id: "overe-universal"
   name_template: "Overe"
 
-release:
-  prerelease: "auto"
-
 # macOS Application Bundle configuration
 app_bundles:
   - id: "overe-app"
@@ -90,4 +87,7 @@ app_bundles:
     plist: "Info.plist"
     bundle_id: "com.user.stt-app"
     universal_binaries:
-      - id: "overe-universal"
+      - "overe-universal"
+
+release:
+  prerelease: "auto"
