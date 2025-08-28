@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/kennyparsons/overe/compare/v1.2.1...v1.2.2) (2025-08-28)
+
+
+### Bug Fixes
+
+* **ci:** Correct Homebrew tap repository and dependency format ([67712f5](https://github.com/kennyparsons/overe/commit/67712f5da0683ee566b3decb59ec29bceefd7414))
+
 ## [1.2.1](https://github.com/kennyparsons/overe/compare/v1.2.0...v1.2.1) (2025-08-28)
 
 
