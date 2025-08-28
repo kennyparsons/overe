@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/kennyparsons/overe/compare/v1.1.0...v1.1.1) (2025-08-28)
+
+
+### Bug Fixes
+
+* Correct .goreleaser.yaml app_bundles configuration ([a078849](https://github.com/kennyparsons/overe/commit/a078849ec87040d3665208930bb0a8e01d474405))
+
 # [1.1.0](https://github.com/kennyparsons/overe/compare/v1.0.0...v1.1.0) (2025-08-28)
 
 
