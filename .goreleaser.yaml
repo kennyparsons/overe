@@ -48,8 +48,11 @@ brews:
     description: "A background app to record audio via a hotkey and transcribe it."
     license: "MIT"
     homepage: "https://github.com/kennyparsons/overe"
-    depends_on:
-      formula: ["go-transcribe"]
+    tap:
+      owner: kennyparsons
+      name: homebrew-go-transcribe
+    dependencies:
+      - name: "go-transcribe"
     install: |
       app "Overe.app"
     repository:
@@ -79,22 +82,12 @@ universal_binaries:
 release:
   prerelease: "auto"
 
-nfpms:
-- id: "overe-app"
-  package_name: "Overe"
-  file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-  homepage: "https://github.com/kennyparsons/overe"
-  description: "A background app to record audio via a hotkey and transcribe it."
-  maintainer: "Kenny Parsons <kenny.parsons@gmail.com>"
-  license: "MIT"
-  formats:
-  - "app"
-  bindir: "/Applications"
-  contents:
-  - src: "dist/darwin_universal/Overe"
-    dst: "/Applications/Overe.app/Contents/MacOS/Overe"
-  - src: "stt/Info.plist"
-    dst: "/Applications/Overe.app/Contents/Info.plist"
-    type: "config"
-  - src: "icon.png"
-    dst: "/Applications/Overe.app/Contents/Resources/icon.png"
+# macOS Application Bundle configuration
+app_bundles:
+  - id: "overe-app"
+    name: "Overe"
+    icon: "builds/icon.icns"
+    plist: "Info.plist"
+    bundle_id: "com.user.stt-app"
+    universal_binaries:
+      - id: "overe-universal"

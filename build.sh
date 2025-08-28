@@ -23,9 +23,13 @@ if [ "$1" == "--app" ]; then
 
     echo "--> Creating .app directory structure..."
     mkdir -p "$APP_PATH/Contents/MacOS"
+    mkdir -p "$APP_PATH/Contents/Resources"
 
     echo "--> Copying Info.plist..."
     cp Info.plist "$APP_PATH/Contents/"
+
+    echo "--> Copying icon..."
+    cp builds/icon.icns "$APP_PATH/Contents/Resources/"
 
     echo "--> Building stt-app executable..."
     go build -ldflags="-w -s" -o "$APP_PATH/Contents/MacOS/stt-app" .

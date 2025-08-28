@@ -14,5 +14,7 @@
     <true/>
     <key>NSMicrophoneUsageDescription</key>
     <string>This app needs to record audio to transcribe it to text.</string>
+    <key>CFBundleIconFile</key>
+    <string>icon.icns</string>
 </dict>
 </plist>
