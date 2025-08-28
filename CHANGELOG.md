@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/kennyparsons/overe/compare/v1.2.2...v1.2.3) (2025-08-28)
+
+
+### Bug Fixes
+
+* force version bump for refactoring changes ([3cf702f](https://github.com/kennyparsons/overe/commit/3cf702ffcc707778e51010be1c8e0e27c262949f))
+
 ## [1.2.2](https://github.com/kennyparsons/overe/compare/v1.2.1...v1.2.2) (2025-08-28)
 
 
